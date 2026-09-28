@@ -32,7 +32,29 @@ const initialTasks: Task[] = [
   },
 ]
 
+export type TaskInput = {
+  title: string
+  description: string
+  priority: TaskPriority
+}
+
 const tasks = reactive<Task[]>(loadTasks())
+
+function normalizeTaskInput(input: TaskInput): TaskInput {
+  return {
+    title: input.title.trim(),
+    description: input.description.trim(),
+    priority: ['low', 'medium', 'high'].includes(input.priority) ? input.priority : 'medium',
+  }
+}
+
+function isTaskStatus(value: unknown): value is TaskStatus {
+  return value === 'todo' || value === 'in-progress' || value === 'done'
+}
+
+function isTaskPriority(value: unknown): value is TaskPriority {
+  return value === 'low' || value === 'medium' || value === 'high'
+}
 
 if (tasks.length === 0) {
   tasks.push(...initialTasks)
@@ -46,15 +68,20 @@ watch(
   { deep: true },
 )
 
-export function addTask(task: { title: string; description: string; priority: TaskPriority }) {
+export function addTask(input: TaskInput) {
   const today = new Date().toISOString().slice(0, 10)
+  const normalized = normalizeTaskInput(input)
+
+  if (!normalized.title) {
+    return
+  }
 
   tasks.unshift({
     id: crypto.randomUUID(),
-    title: task.title,
-    description: task.description,
+    title: normalized.title,
+    description: normalized.description,
     status: 'todo',
-    priority: task.priority,
+    priority: normalized.priority,
     dueDate: today,
     createdAt: today,
   })
@@ -64,7 +91,16 @@ export function updateTask(taskId: string, updates: Partial<Task>) {
   const target = tasks.find((task) => task.id === taskId)
   if (!target) return
 
-  Object.assign(target, updates)
+  const nextTask: Partial<Task> = {}
+
+  if (updates.title !== undefined) nextTask.title = updates.title.trim()
+  if (updates.description !== undefined) nextTask.description = updates.description.trim()
+  if (updates.status !== undefined && isTaskStatus(updates.status)) nextTask.status = updates.status
+  if (updates.priority !== undefined && isTaskPriority(updates.priority)) nextTask.priority = updates.priority
+  if (updates.dueDate !== undefined) nextTask.dueDate = updates.dueDate
+  if (updates.createdAt !== undefined) nextTask.createdAt = updates.createdAt
+
+  Object.assign(target, nextTask)
 }
 
 export function deleteTask(taskId: string) {
@@ -90,6 +126,8 @@ export function getTaskById(taskId: string) {
 }
 
 export function setTaskStatus(taskId: string, status: TaskStatus) {
+  if (!isTaskStatus(status)) return
+
   const target = tasks.find((task) => task.id === taskId)
   if (!target) return
 

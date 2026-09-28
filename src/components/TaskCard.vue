@@ -40,7 +40,12 @@ function deleteTask() {
 }
 
 function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('zh-CN', {
+  const value = new Date(date)
+  if (Number.isNaN(value.getTime())) {
+    return '未设置'
+  }
+
+  return value.toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',

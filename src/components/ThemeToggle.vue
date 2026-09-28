@@ -9,21 +9,32 @@ function applyTheme(value: boolean) {
   document.documentElement.classList.toggle('dark', value)
 }
 
-onMounted(() => {
-  const savedTheme = localStorage.getItem(STORAGE_KEY)
-
-  if (savedTheme) {
-    applyTheme(savedTheme === 'dark')
-    return
+function loadPreferredTheme(): boolean {
+  try {
+    const savedTheme = localStorage.getItem(STORAGE_KEY)
+    if (savedTheme === 'dark' || savedTheme === 'light') {
+      return savedTheme === 'dark'
+    }
+  } catch (error) {
+    console.error('Failed to read theme from localStorage:', error)
   }
 
-  applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches)
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+}
+
+onMounted(() => {
+  applyTheme(loadPreferredTheme())
 })
 
 watch(
   isDark,
   (value) => {
-    localStorage.setItem(STORAGE_KEY, value ? 'dark' : 'light')
+    try {
+      localStorage.setItem(STORAGE_KEY, value ? 'dark' : 'light')
+    } catch (error) {
+      console.error('Failed to save theme to localStorage:', error)
+    }
+
     document.documentElement.classList.toggle('dark', value)
   },
   { immediate: true },
