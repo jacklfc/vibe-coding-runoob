@@ -1,0 +1,52 @@
+.
+├── dir.txt
+├── index.html
+├── node_modules
+│   ├── @babel
+│   ├── @jridgewell
+│   ├── @oxc-project
+│   ├── @rolldown
+│   ├── @tailwindcss
+│   ├── @vitejs
+│   ├── @vue
+│   ├── csstype
+│   ├── detect-libc
+│   ├── enhanced-resolve
+│   ├── entities
+│   ├── estree-walker
+│   ├── fdir
+│   ├── fsevents
+│   ├── graceful-fs
+│   ├── jiti
+│   ├── lightningcss
+│   ├── lightningcss-darwin-arm64
+│   ├── magic-string
+│   ├── nanoid
+│   ├── picocolors
+│   ├── picomatch
+│   ├── postcss
+│   ├── rolldown
+│   ├── source-map-js
+│   ├── tailwindcss
+│   ├── tapable
+│   ├── tinyglobby
+│   ├── vite
+│   └── vue
+├── package-lock.json
+├── package.json
+├── public
+│   ├── favicon.svg
+│   └── icons.svg
+├── README.md
+├── src
+│   ├── App.vue
+│   ├── assets
+│   ├── components
+│   ├── main.js
+│   ├── stores
+│   ├── style.css
+│   ├── types
+│   └── utils
+└── vite.config.js
+
+39 directories, 11 files
